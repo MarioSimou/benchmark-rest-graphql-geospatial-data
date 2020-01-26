@@ -1,30 +1,29 @@
 package main
 
 import (
-	"database/sql"
+	"context"
 	"log"
 
 	"github.com/MarioSimou/gis-service-cy/internal"
 	"github.com/gin-gonic/gin"
-	_ "github.com/lib/pq"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func main() {
 	var router = gin.Default()
 	var port = "3000"
 	var e error
-	var db *sql.DB
+	var client *mongo.Client
 
-	if db, e = sql.Open("postgres", "postgresql://msimou:msimou@localhost:5432/gis?sslmode=disable"); e != nil {
+	if client, e = mongo.Connect(context.TODO(), options.Client().ApplyURI("mongodb://localhost:27017")); e != nil {
 		log.Fatalln(e)
 	}
-	if e = db.Ping(); e != nil {
+	if e = client.Ping(context.Background(), nil); e != nil {
 		log.Fatalln(e)
 	}
-	defer db.Close()
 
-	var contr = internal.New(db)
-
+	var contr = internal.New(client.Database("gis", nil))
 	router.GET("/api/v1/cy/population", contr.GetPopulation)
 	log.Fatalln(router.Run(":" + port))
 }
