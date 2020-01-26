@@ -1,26 +1,29 @@
 package main
 
 import (
+	"database/sql"
 	"log"
-
-	"io/ioutil"
-	"path/filepath"
 
 	"github.com/MarioSimou/gis-service-cy/internal"
 	"github.com/gin-gonic/gin"
+	_ "github.com/lib/pq"
 )
 
 func main() {
 	var router = gin.Default()
 	var port = "3000"
-	var pop []byte
 	var e error
+	var db *sql.DB
 
-	if pop, e = ioutil.ReadFile(filepath.Join("data", "pop-distribution.geojson")); e != nil {
+	if db, e = sql.Open("postgres", "postgresql://msimou:msimou@localhost:5432/gis?sslmode=disable"); e != nil {
 		log.Fatalln(e)
 	}
-	var db = internal.Db{Population: pop}
-	var contr = internal.New(&db)
+	if e = db.Ping(); e != nil {
+		log.Fatalln(e)
+	}
+	defer db.Close()
+
+	var contr = internal.New(db)
 
 	router.GET("/api/v1/cy/population", contr.GetPopulation)
 	log.Fatalln(router.Run(":" + port))
