@@ -1,0 +1,48 @@
+version: '3.7'
+
+volumes: 
+  mongo_data:
+  postgres_data:
+
+services:
+  mongo:
+    container_name: mongo_gis
+    image: mongo:4
+    ports:
+      - 27017:27017
+    volumes: 
+      - mongo_data:/data/db
+    restart: on-failure
+  postgres:
+    container_name: postgres-gis
+    image: postgres:12
+    ports:
+      - 5432:5432
+    environment: 
+      - POSTGRES_DB=gis
+      - POSTGRES_PASSWORD=${USER:-postgres}
+      - POSTGRES_USER=${USER:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: on-failure
+  app:
+    container_name: app
+    image: msimou/gis
+    build:
+      context: $PWD
+      dockerfile: deployments/app.dockerfile
+    environment: 
+      - PORT=3000
+      - MONGO_URI=mongodb://mongo/gis
+      - MONGO_DB=gis
+      - POSTGRES_URI=postgresql://${USER:-postgres}:${USER:-postgres}@postgres/gis?sslmode=disable
+    volumes: 
+      - type: bind
+        source: $PWD
+        target: /go/src/github.com/MarioSimou/app
+    ports:
+      - 3000:3000
+    restart: on-failure
+    depends_on: 
+      - postgres
+      - mongo

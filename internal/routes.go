@@ -2,7 +2,6 @@ package internal
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -21,7 +20,6 @@ func New(db *mongo.Database) *controller {
 func (contr *controller) GetPopulation(c *gin.Context) {
 	var collection = contr.Db.Collection("population")
 	var features []Feature
-	fmt.Println(collection)
 
 	cur, e := collection.Find(context.Background(), bson.M{}, nil)
 	if e != nil {
@@ -30,7 +28,6 @@ func (contr *controller) GetPopulation(c *gin.Context) {
 	}
 	defer cur.Close(context.Background())
 
-	fmt.Println("starting the iteration")
 	for cur.Next(context.Background()) {
 		var feature Feature
 		if e := cur.Decode(&feature); e != nil {
