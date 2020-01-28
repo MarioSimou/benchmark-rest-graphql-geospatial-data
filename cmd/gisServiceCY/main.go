@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"log"
+	"os"
 
 	"github.com/MarioSimou/gis-service-cy/internal"
 	"github.com/gin-gonic/gin"
@@ -11,11 +12,11 @@ import (
 
 func main() {
 	var router = gin.Default()
-	var port = "3000"
+	var port = os.Getenv("PORT")
 	var e error
 	var db *sql.DB
 
-	if db, e = sql.Open("postgres", "postgresql://msimou:msimou@localhost:5432/gis?sslmode=disable"); e != nil {
+	if db, e = sql.Open("postgres", os.Getenv("POSTGRES_URI")); e != nil {
 		log.Fatalln(e)
 	}
 	if e = db.Ping(); e != nil {
