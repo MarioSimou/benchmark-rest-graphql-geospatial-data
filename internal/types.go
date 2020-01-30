@@ -6,6 +6,12 @@ import (
 	"errors"
 )
 
+type Body struct {
+	OperationName string                 `json:"operationName"`
+	Variables     map[string]interface{} `json:"variables"`
+	Query         string                 `json:"query"`
+}
+
 type Population struct {
 	Type     string `json:"type"`
 	Name     string `json:"name"`

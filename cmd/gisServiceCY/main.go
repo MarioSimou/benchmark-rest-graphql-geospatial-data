@@ -2,16 +2,17 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"os"
 
+	"net/http"
+
 	"github.com/MarioSimou/gis-service-cy/internal"
-	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 )
 
 func main() {
-	var router = gin.Default()
 	var port = os.Getenv("PORT")
 	var e error
 	var db *sql.DB
@@ -26,6 +27,7 @@ func main() {
 
 	var contr = internal.New(db)
 
-	router.GET("/api/v1/cy/population", contr.GetPopulation)
-	log.Fatalln(router.Run(":" + port))
+	http.HandleFunc("/graphql", contr.GraphqlEndpoint)
+	fmt.Println("The app listens on http://localhost:" + port + "/graphql")
+	log.Fatalln(http.ListenAndServe(":"+port, nil))
 }
