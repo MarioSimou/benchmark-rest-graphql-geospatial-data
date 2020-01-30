@@ -1,5 +1,11 @@
 package internal
 
+type Body struct {
+	Query         string                 `json:"query"`
+	OperationName string                 `json:"operationName"`
+	Variables     map[string]interface{} `json:"variables"`
+}
+
 type Population struct {
 	Type     string    `json:"type"`
 	Name     string    `json:"name"`

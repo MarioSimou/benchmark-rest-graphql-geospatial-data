@@ -1,5 +1,42 @@
-# gis-service
+# GraphQL && Mongodb for Geospatial Data
 
-## How to import geojson data to mongodb?
 
-[link](https://stackoverflow.com/questions/22029114/how-to-import-geojson-file-to-mongodb)
+## GraphqlQuery
+
+```
+query {
+  population {
+    type
+    name
+    features {
+      ...featureFragment
+    }
+  }
+}
+
+fragment geometryFragment on Geometry {
+  type
+  coordinates
+}
+
+fragment propertiesFragment on Properties {
+  gmlId
+  localId
+  namespace
+  versionId
+  notCountedProportion
+  localisedCharacterString
+  endPosition
+}
+
+fragment featureFragment on Feature {
+ type
+ properties {
+   ...propertiesFragment
+ }
+ geometry {
+   ...geometryFragment
+ }
+}
+
+```

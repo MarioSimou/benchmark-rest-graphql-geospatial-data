@@ -3,16 +3,15 @@ package main
 import (
 	"context"
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/MarioSimou/gis-service-cy/internal"
-	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func main() {
-	var router = gin.Default()
 	var port = os.Getenv("PORT")
 	var e error
 	var client *mongo.Client
@@ -25,6 +24,6 @@ func main() {
 	}
 
 	var contr = internal.New(client.Database(os.Getenv("MONGO_DB"), nil))
-	router.GET("/api/v1/cy/population", contr.GetPopulation)
-	log.Fatalln(router.Run(":" + port))
+	http.HandleFunc("/graphql", contr.GraphqlEndpoint)
+	log.Fatalln(http.ListenAndServe(":"+port, nil))
 }

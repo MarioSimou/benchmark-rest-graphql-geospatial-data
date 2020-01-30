@@ -1,11 +1,10 @@
 package internal
 
 import (
-	"context"
+	"encoding/json"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson"
+	"github.com/graphql-go/graphql"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -17,29 +16,17 @@ func New(db *mongo.Database) *controller {
 	return &controller{db}
 }
 
-func (contr *controller) GetPopulation(c *gin.Context) {
-	var collection = contr.Db.Collection("population")
-	var features []Feature
+func (contr *controller) GraphqlEndpoint(w http.ResponseWriter, r *http.Request) {
+	var body Body
+	json.NewDecoder(r.Body).Decode(&body)
+	schema, _ := NewSchema(contr.Db)
 
-	cur, e := collection.Find(context.Background(), bson.M{}, nil)
-	if e != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": e.Error()})
-		return
+	var params = graphql.Params{
+		Schema:         schema,
+		OperationName:  body.OperationName,
+		VariableValues: body.Variables,
+		RequestString:  body.Query,
 	}
-	defer cur.Close(context.Background())
 
-	for cur.Next(context.Background()) {
-		var feature Feature
-		if e := cur.Decode(&feature); e != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"message": e.Error()})
-			return
-		}
-
-		features = append(features, feature)
-	}
-	c.JSON(http.StatusOK, Population{
-		Type:     "FeatureCollection",
-		Name:     "pop-distribution",
-		Features: features,
-	})
+	json.NewEncoder(w).Encode(graphql.Do(params))
 }
