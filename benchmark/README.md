@@ -8,12 +8,19 @@ In order to benchmark the service, [apache benchmark](https://httpd.apache.org/d
 
 **Percentage** | **Time(ms)** |
 --- | --- |
-50% | 1255 |
-66% | 1332 |
-75% | 1350 |
-80% | 1378 |
-90% | 1451 |
-95% | 1508 |
-98% |  1557 |
-99% |  1589 |
-100% | 1589 |
+50% | 1638 |
+66% | 1754 |
+75% | 1847 |
+80% | 1905 |
+90% | 2077 |
+95% | 2272 |
+98% | 2478 |
+99% | 2564 |
+100% | 2779 |
+
+
+### Command
+
+```
+ab -n 1000 -c 10 -p ./benchmark/body.json -m POST -T application/json localhost:3000/graphql
+```
