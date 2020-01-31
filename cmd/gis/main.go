@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	var router = gin.Default()
+	var router = gin.New()
 	var port = os.Getenv("PORT")
 	var e error
 	var client *mongo.Client
