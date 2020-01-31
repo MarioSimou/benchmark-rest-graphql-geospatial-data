@@ -1,5 +1,7 @@
 ### Benchmark
 
+In order to benchmark the service, [apache benchmark](https://httpd.apache.org/docs/2.4/programs/ab.html) has been used.
+
 **nRequests**: 1000
 
 **concurrency**: 10
