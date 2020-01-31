@@ -1,0 +1,1 @@
+{"query":"query{population{type name features{type properties{gmlId localId namespace versionId localisedCharacterString notCountedProportion endPosition duration} geometry{type coordinates}}}}"}
