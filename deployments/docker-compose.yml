@@ -34,6 +34,7 @@ services:
     environment: 
       - PORT=3000
       - MONGO_URI=mongodb://mongo/gis
+      - MONGO_DB=gis
       - POSTGRES_URI=postgresql://${USER:-postgres}:${USER:-postgres}@postgres/gis?sslmode=disable
     volumes: 
       - type: bind
