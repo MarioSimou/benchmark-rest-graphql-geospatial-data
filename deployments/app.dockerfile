@@ -8,4 +8,4 @@ RUN go get github.com/cespare/reflex \
     && go get -v ./...
 
 EXPOSE 3000
-CMD reflex -s -r '\.go$' -d fancy -- go run ./cmd/gisServiceCY/main.go
+CMD reflex -s -r '\.go$' -d fancy -- go run ./cmd/gis/main.go
